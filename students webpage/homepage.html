@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Academy HomePgae</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+
+    <body onload="getStudentsAndCreate()">
+        <nav class="navbar navbar-expand-sm navbar-light sticky-top">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="homepage.html">Academy Students</a>
+              
+              <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                  <li class="nav-item">
+                    <a class="nav-link" href="addStudent.html">ADD STUDENT</a>
+                  </li>
+                  
+                  <li class="nav-item">
+                    <div class="input-group" style="margin-left: 10px; ">
+                        <div class="input-group-text inputTextNav" id="navUsername" ></div>
+                        <button class="btn btn-outline-primary"onclick="redirectLogin()">Logout</button>
+                    </div>
+                 </li>
+                
+                </ul>
+              </div>
+              <form class="d-flex">
+                <input id="profileSearch" class="form-control me-2" type="text" placeholder="Search by ID..." id="searchBox">
+                <button class="btn btn-primary" type="button" onclick="goToStudentProfile()">Search</button>
+            </form>
+            </div>
+          </nav>
+          
+        
+
+        <div class="bodyDiv">
+            <h3 class="display-3 heading">Welcome To The Academy!</h3>
+            <form class="d-flex" style="margin-bottom:50px">
+                <input class="form-control me-2" type="text" placeholder="Search" id="searchBox">
+                <button class="btn btn-primary" type="button" onclick="goToSearchedDiv()">Search</button>
+            </form>
+            <div class="cardsHolder"  id="studentsCardsHolder"></div>
+            <button id="loadMoreCards" class="btn btn-secondary btn-block" onclick="createCards()" style="display: none;">LOAD MORE</button>
+            <button id="displayAllCards" class="btn btn-secondary btn-block" onclick="displayAll()" style="display: none;">SHOW OTHER CARDS</button>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script src="index.js"  type="text/javascript"></script>
+        <script>
+            initpage()
+
+
+            let all_students = []
+            let cardsDisplayed = 0
+            const MAXCARDS = 3
+            const MAXTEXT = 53
+            const cardsHolder = document.getElementById("studentsCardsHolder")
+
+
+            const goToSearchedDiv = () =>{
+                //get
+                let div_ids=[]
+                let searchString = document.getElementById("searchBox").value
+                all_students.forEach((student) => {
+                    for (key in student){
+                        if(key=="grades"){
+                            continue
+                        }
+                        if (student[key].toString().includes(searchString)){
+                            div_ids.push(student._id)
+                            return
+                        }
+                    }
+                });
+                if(div_ids!=0){
+                    divsDisplay(div_ids)
+                }
+            }
+            const divsDisplay = (ids)=>{
+
+                let cards = document.getElementById("studentsCardsHolder").children
+                while(!ids.every(id=> cards.hasOwnProperty(id))){
+                    createCards()
+                    let cards = document.getElementById("studentsCardsHolder").children
+                }
+                console.log();
+                for (let i=0;i<cards.length;i++){
+                    if(!ids.includes(cards[i].id)){
+                        
+                        cards[i].style.display='none'
+                    }else{
+                        console.log(cards[i]);
+                        cards[i].style.display='flex'
+                    }
+                }
+                document.getElementById("loadMoreCards").style.display = 'none'
+                document.getElementById('displayAllCards').style.display = 'inline'
+            }
+            const displayAll= ()=>{
+                cards = document.getElementById("studentsCardsHolder").children
+                for(let i = 0;i<cards.length;i++){
+                    cards[i].style.display='flex'
+                }
+                document.getElementById('displayAllCards').style.display = 'none'
+                if(cardsDisplayed!=all_students.length){
+                    document.getElementById("loadMoreCards").style.display = 'inline'
+                }
+            }
+            const getStudentsAndCreate = async ()=>{
+                all_students = await getAllStudents()
+                if (!all_students){
+                    cardsHolder.innerText = "couldn't get students!"
+                    return
+                }
+                createCards()
+                
+                
+            }
+            const createCards = () =>{
+                if (!all_students){return}
+                
+                for (let i = 0; i<MAXCARDS &&  i<all_students.length;i++){
+                    createStudentsCard()
+                }
+            }
+
+            const createStudentsCard = ()=>{
+            
+                if(cardsDisplayed == all_students.length)
+                {
+                    document.getElementById("loadMoreCards").style.display = 'none'
+                    return
+                }
+                else{
+                    document.getElementById("loadMoreCards").style.display = 'inline'
+                }
+                
+                let student = all_students[cardsDisplayed]
+                cardsDisplayed++
+                const cardStracture = {
+                    tagName:"div",
+                    name:student.fullName,
+                    id:student._id,
+                    className:"card text-center",
+                    appended:[
+                        {tagName:"div",className:"card-header",appended:[
+                            {tagName:"ul", className:"nav nav-tabs card-header-tabs justify-content-end",dataset:{bsTabs:"tabs"}, appended:[
+                                {tagName:'li', className:"nav-item",appended:[
+                                    {tagName:"a", className:"nav-link active", ariaCurrent:true,href:`#sum${student._id}`,innerText:"summery",dataset:{bsToggle:'tab'}}
+                                ]},
+                                {tagName:"li", className:"nav-item", appended:[
+                                    {tagName:'a',className:"nav-link",href:`#info${student._id}`,innerText:"info",dataset:{bsToggle:'tab'}}
+                                ]},
+                                {tagName:"li", className:"nav-item dropdown", appended:[
+                                    {tagName:"a", className:"nav-link dropdown-toggle", innerText:"Options", dataset:{bsToggle:"dropdown"}, ariaHasPopup:true, ariaExpanded:false},
+                                    {tagName:"ul", className:"dropdown-menu", appended:[
+                                        {tagName:"li",appended:[
+                                            {tagName:"a", className:"dropdown-item", innerText:"Update", onclick: function(){updateStudentCard(student._id)}}
+                                        ]},
+                                        {tagName:"li",appended:[
+                                            {tagName:"a", className:"dropdown-item" ,innerText:"Profile" ,onclick: function(){viewStudentProfile(student._id)}}
+                                        ]},
+                                        {tagName:"li",appended:[
+                                            {tagName:"a", className:"dropdown-item" ,innerText:"Grades" ,onclick: function(){viewStudentGrades(student._id)}}
+                                        ]},
+                                        {tagName:"li",appended:[
+                                            {tagName:"hr", className:"dropdown-divider"}
+                                        ]},
+                                        {tagName:"li",appended:[
+                                            {tagName:"a", className:"dropdown-item text-danger" ,innerText:"delete", onclick: function(){deleteStudentCard(student._id)}}
+                                        ]}
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        {tagName:"div",style:"display:grid",className:"card-body tab-content text-wrap",appended:[
+                            {tagName:"div", id:`sum${student._id}`,className:"tab-pane active", appended:[
+                                {tagName:"img",className:"card-img-top" ,style:"height:50%; width:80%; border-radius:50%",src:student.img},
+                                {tagName:"h4",className:"card-title",innerHTML:`${student.fullName} ${student.honor?"&#x2B50":""}`},
+                                {tagName:"h5",className:"card-subtitle mb-2 text-muted",innerText:`faculty: ${student.faculty}`},
+                                {tagName:"button" , className:"btn btn-primary position-absolute bottom-0 start-50 translate-middle-x", innerText:"View Profile", style:"width:90%; margin-bottom:20px", onclick: function (){sessionStorage.setItem("student",student._id); redirectToStudentProfile()}}
+                            ]},
+                            {tagName:"div",id:`info${student._id}`, className:"tab-pane", style:"align-self:center", appended:[
+                                {tagName:'h5', className:"card-text text-start", innerText:`Email: ${student.email}`},
+                                {tagName:'h5', className:"card-text text-start", innerText:`${student.grades.length? "Avarge: "+student.grades.map(grade=>grade.score).reduce((acc,val)=>{return acc+val})/student.grades.length: "No grades yet !"}`},
+                                {tagName:'hr'},
+                                {tagName:"h5",className:"card-text",innerText:`About: ${student.aboutMe.length>MAXTEXT? student.aboutMe.substring(0,MAXTEXT-3)+"...":student.aboutMe}`}
+                            ]}
+                        ]},
+                        
+                    ]}
+                
+                cardsHolder.append(createElementByObject(cardStracture))
+            }
+
+            const deleteStudentCard = async (id) =>{
+                const consent = confirm("This can't be undone, continue?")
+                if (!consent){
+                    return
+                }
+                const ans = await deleteStudent(id)
+                if (ans){
+                    let index = all_students.findIndex((student)=>student._id==id)
+                    all_students.splice(index,1)
+                    document.getElementById(id).remove()
+                    cardsDisplayed--
+                    createStudentsCard()
+                }
+            }
+            const updateStudentCard = (id)=>{
+                sessionStorage.setItem("student",id)
+                redirectToUpdate()
+            }
+            const viewStudentGrades = (id)=>{
+                sessionStorage.setItem("student",id)
+                redirectToGrades()
+            }
+            const viewStudentProfile = (id) =>{
+                sessionStorage.setItem("student",id)
+                redirectToStudentProfile()
+            }
+            
+        </script>
+    </body>
+</html>

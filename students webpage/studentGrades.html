@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css">
+        <title>Grades</title>
+    </head>
+    <body onload="loadGrades()">
+        
+        <nav class="navbar navbar-expand-sm navbar-light sticky-top">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="homepage.html">Academy Students</a>
+              
+              <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                  <li class="nav-item">
+                    <a class="nav-link" href="addStudent.html">ADD STUDENT</a>
+                  </li>
+                 
+                  <li class="nav-item">
+                    <div class="input-group" style="margin-left: 10px; ">
+                        <div class="input-group-text inputTextNav" id="navUsername" ></div>
+                        <button class="btn btn-outline-primary"onclick="redirectLogin()">Logout</button>
+                    </div>
+                </li>
+               
+                </ul>
+              </div>
+              <form class="d-flex ">
+                <input id="profileSearch" class="form-control me-2" type="text" placeholder="Search by ID..." id="searchBox">
+                <button class="btn btn-primary" type="button" onclick="goToStudentProfile()">Search</button>
+            </form>
+            </div>
+          </nav>
+
+        <div>
+            <form class="was-validated mini-form"  style="display: inline-block ;">
+                <h6 class="display-6 heading">Add Test</h6>
+                <div class="form-check mb-3">
+                    <label class="form-label">Name</label>
+                    <input id="newTestName" type="text" class="form-control" required>
+                    <div class="invalid-feedback">Must enter Name</div>
+                </div>
+                <div class="form-check mb-3">
+                    <label class="form-label">Score</label>
+                    <input id="newTestScore" type="number" class="form-control" required>
+                    <div class="invalid-feedback">Must enter score</div>
+                </div>
+                <div class="form-check mb-3">
+                    <label class="form-label">Date</label>
+                    <input id="newTestDate" type="datetime-local" class="form-control" required>
+                    <div class="invalid-feedback">Must enter date</div>
+                </div>
+                <div class="centeredText">
+                    <button onclick="addTest()" type="button" class="btn btn-primary">Add test</button>
+                </div>
+
+            </form>
+
+            <form class="was-validated float-end fixedForm mini-form" id="updateForm" >
+                <h6 class="display-6 heading">Update Test</h6>
+                <div class="form-check mb-3">
+                    <label class="form-label">Name</label>
+                    <input id="updatedTestName" type="text" class="form-control" required>
+                    <div class="invalid-feedback">Must enter Name</div>
+                </div>
+                <div class="form-check mb-3">
+                    <label class="form-label">Score</label>
+                    <input id="updatedTestScore" type="number" class="form-control" required>
+                    <div class="invalid-feedback">Must enter score</div>
+                </div>
+                <div class="form-check mb-3">
+                    <label class="form-label">Date</label>
+                    <input id="updatedTestDate" type="datetime-local" class="form-control" required>
+                    <div class="invalid-feedback">Must enter date</div>
+                </div>
+                <div class="centeredText">
+                    <button onclick="putTest()" type="button" class="btn btn-primary">Update Test</button>
+                    <button onclick="hideElement('updateForm')" type="button" class="btn btn-danger">Cancel</button>
+                </div>
+            </form>
+        </div>
+            <div id="gradesDiv">
+                <table id="gradesTable" class="dataDisplayTable table">
+                    <tr>
+                        <th>name</th><th>score</th><th>date</th><th colSpan = 2>options</th>
+                    </tr>
+                </table>
+           
+            <button onclick="redirectToStudentProfile()"class="btn btn-secondary" style="margin-bottom: 30px; margin-top:30px;display:inline; width: 100%;">Go back to profile</button>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script src="index.js"  type="text/javascript"></script>
+        <script>
+            initpage()
+            const student_id = sessionStorage.getItem("student")
+            let gradesTable = document.getElementById("gradesTable")
+
+            const loadGrades = async ()=>{
+                let student_grades = await getStudentGrades(student_id)
+                if(student_grades.length==0){
+                    return
+                }
+                student_grades.forEach((grade) => {
+                    createGradeRow(grade)
+                });
+            }
+            const createGradeRow=(grade)=>{
+                let new_tr = document.createElement('tr')
+                    new_tr.id = grade._id
+                    for(var key in grade){
+                        if(grade.hasOwnProperty(key) && key!="_id"){ //not to run on every property
+                            let new_td = document.createElement('td')
+                            if(key == "date"){
+                                grade.date = grade.date.split(".")[0]
+                                new_td.value = grade.date
+                                new_td.innerHTML = grade.date.split(".")[0].replace('T'," at ").replaceAll('-','/')
+                                
+                            }else{
+                                new_td.value = grade[key]
+                                new_td.innerHTML = grade[key]
+                            }
+                                new_td.name = key
+                                
+                            
+                            new_tr.appendChild(new_td)
+                        }
+                    }
+                    //edet td
+                    let new_td = document.createElement('td')
+                    new_td.innerText = 'Edit'
+                    new_td.name = 'edit'
+                    new_td.onclick = function () {editGrade(grade)}
+                    new_tr.appendChild(new_td)
+                    //delete td
+                    new_td = document.createElement('td')
+                    new_td.innerText = 'Delete'
+                    new_td.name = 'delete'
+                    new_td.onclick = function () {deleteGradeTr(new_tr)}
+                    new_tr.appendChild(new_td)
+                    
+                    gradesTable.appendChild(new_tr)
+            }
+            
+            const editGradeTr = (grade) =>{
+                
+                tr = document.getElementById(grade._id).children
+                for(let i = 0;i<tr.length;i++){
+                    if (tr[i].name == 'edit'||tr[i].name=='delete'){
+                        continue
+                    }
+                    if(tr[i].name == "date"){
+                        tr[i].value = grade.date.split(".")[0]
+                        tr[i].innerText=grade.date.split(".")[0].replace('T'," at ").replaceAll('-','/')
+                    }else{
+                        tr[i].value = grade[tr[i].name]
+                        tr[i].innerText = grade[tr[i].name]
+                    }
+                    
+                }
+            }
+            const editGrade=(grade)=>{
+                document.getElementById("updateForm").style.visibility = "visible"
+                document.getElementById("updateForm").value = grade._id
+                document.getElementById("updatedTestName").value = grade.name
+                document.getElementById("updatedTestScore").value = grade.score
+                document.getElementById("updatedTestDate").value = grade.date
+            }
+            const putTest = async() =>{
+                const id = document.getElementById("updateForm").value
+                const grade_name =  document.getElementById("updatedTestName").value
+                const grade_score = document.getElementById("updatedTestScore").value
+                const grade_date = document.getElementById("updatedTestDate").value
+                if(!grade_date && !grade_name && !grade_score){return}
+                console.log({
+                    name: grade_name,
+                    score: grade_score,
+                    date: grade_date
+                });
+                let answer = await putGradeToStudent(student_id,id,{
+                    name: grade_name,
+                    score: grade_score,
+                    date: grade_date
+                })
+                if (answer){
+                    editGradeTr(answer)
+                    hideElement('updateForm')
+                }else{
+                    console.log("error updating grade");
+                }
+            }
+            const deleteGradeTr = async (tr)=>{
+                const consent = confirm("This can't be undone, continue?")
+                if (!consent){
+                    return
+                }
+                let answer = await deleteStudentGrade(student_id,tr.id)
+                if(answer){
+                    tr.remove()
+                }else{
+                    console.log("error removing grade");
+                }
+            }
+            const addTest = async ()=>{
+                const grade_name = document.getElementById("newTestName").value
+                const grade_score = document.getElementById("newTestScore").value
+                const grade_date = document.getElementById("newTestDate").value
+
+                if (grade_date && grade_score && grade_name){
+                    let grade = {
+                        name:grade_name,
+                        score:grade_score,
+                        date:grade_date
+                    }
+                    let answer = await postStudentGrade(student_id,grade)
+                    if (answer){
+                        createGradeRow(answer)
+                        hideElement('updateForm')
+                    }else{
+                        console.log("error creating grade");
+                    }
+                }
+            }
+            const hideElement = (elID)=>{
+                document.getElementById(elID).style.visibility ='hidden'
+                
+            }
+        </script>
+    </body>
+</html>

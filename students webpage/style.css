@@ -1,0 +1,136 @@
+body{
+    background-color:rgb(224, 224, 224);
+    
+}
+/* allways call those classes last to override bootstrap  */
+.bodyDiv{
+    display: grid;
+    justify-content: center;
+    margin-top: 5vh;
+}
+.cardsHolder{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    
+
+}
+.dataDisplayTable{
+    margin-left: 20px;
+    border: 2px solid black;
+    border-collapse: collapse;
+    width: 70%;
+}
+.dataDisplayTable td{
+    border: 1px solid black;
+    text-align: center;
+}
+
+.dataDisplayTable th{
+    border: 1px solid black;
+    text-align: center;
+    
+}
+
+.card{
+    width: 300px;
+    height: 480px;
+    
+}
+.fixedForm{
+    display: inline-block;
+    visibility: hidden;
+    position: fixed;
+    right: 2%;
+}
+.mini-form{
+    margin-top: 30px;
+    padding: 20px;
+    text-align: left;
+}
+.profileDIv{
+    border-radius: 5%;
+    border: dashed black 1px;
+    width: fit-content;
+    margin-top: 10px;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+    align-items: center;
+}
+.profileDIv h2{
+    text-align: center;
+}
+.profileDIv img {
+    border: 1px solid black ;
+    width: 200px;
+    height: 200px;
+    
+}
+#loadMoreCards, #displayAllCards{
+    margin-bottom: 30px;
+    margin-top: 30px;
+    width: 100%;
+} 
+.heading{
+    text-align: center; 
+    margin-bottom: 20px;
+    color: rgb(105, 0, 175);
+
+}  
+.centeredText{
+    gap: 10px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+/* quick bootstrap colors override */
+.navbar{
+    background-color: rgb(185, 126, 240);
+}
+.nav-link{
+    color: rgb(190, 13, 190);
+}
+.nav-link:hover, .nav-link:focus, .nav-link:active, .btn-secondarynav-link.active{
+    color: rgb(255, 111, 255);
+}
+.inputTextNav{
+    background-color: #d7b1e6;
+    border-color: #d7b1e6;
+}
+.btn-secondary{
+    background-color: rgb(255, 167, 255);
+    color: rgb(185, 58, 154);
+    border-color: rgb(250, 108, 250);
+
+  
+}
+.btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active, .btn-secondary.active, .open>.dropdown-toggle.btn-secondary {
+    border-color: rgb(228, 90, 228);;
+    background-color: rgb(255, 67, 255);
+    
+}
+
+.btn-primary {
+
+    color: #fff;
+    background-color: rgb(161, 89, 161);
+    border-color: purple; 
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open>.dropdown-toggle.btn-primary {
+    color: #fff;
+    background-color: #763391;
+    border-color: #763391; 
+}
+
+.btn-outline-primary{
+    border-color: purple;
+    color: purple;
+}
+.btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active, .btn-outline-primary.active, .open>.dropdown-toggle.btn-primarybtn-outline-primary {
+    border-color: purple;
+    background-color: rgb(161, 89, 161);
+    color: rgb(255, 179, 255);
+}

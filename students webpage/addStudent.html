@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css">
+        <title>Add student</title>
+    </head>
+
+    <body  onload="createFacultiesOptions()">
+        <nav class="navbar navbar-expand-sm navbar-light sticky-top">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="homepage.html">Academy Students</a>
+              
+              <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="addStudent.html">ADD STUDENT</a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="input-group" style="margin-left: 10px; ">
+                            <div class="input-group-text inputTextNav" id="navUsername" ></div>
+                            <button class="btn btn-outline-primary"onclick="redirectLogin()">Logout</button>
+                        </div>
+                    </li>
+                    
+                </ul>
+                
+            </div>
+            <form class="d-flex navbar-form">
+                <input id="profileSearch" class="form-control me-2" type="text" placeholder="Search by ID..." id="searchBox">
+                <button class="btn btn-primary" type="button" onclick="goToStudentProfile()">Search</button>
+            </form>
+            </div>
+        </nav>
+
+
+        <div class="bodyDiv">
+            
+            <h3 class="display-3 heading">Add A Student To The Academy!</h3>
+            <div class="centeredForm">
+                <form class="was-validated" action="homepage.html" onsubmit="AddNewStudent(); return false">
+                    <div class="form-check mb-3">
+                        <label class="form-label" for="fullNameInput">Full Name</label>
+                        <input id="fullNameInput" type="text" class="form-control" required>
+                    
+                        <div class="invalid-feedback">Must enter First Name</div>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <label class="form-label" for="emailInput">Email</label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text" >@</span>
+                            <input id ="emailInput",type="text" class="form-control" id="emailInput" required>
+                            <div class="invalid-feedback">Please Enter Email.</div>
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <label class="form-label" for="birthdayInput">Birthday</label>
+                        <input id="birthdayInput" type="date" class="form-control" required>
+                        
+                        <div class="invalid-feedback">pick a birthday</div>
+                    </div>
+                    
+                
+                    <div class="form-check mb-3">
+                        <label class="form-label" for="facultyInput">Faculty</label>
+                        <select required id="facultyInput",class="form-select">
+                                <option value="" disabled selected>Faculty...</option>
+                                <!-- <option value="Computer Sience">Computer Sience</option>
+                                <option value="Physics">Physics</option>
+                                <option value="Biology">Biology</option>
+                                <option value="Electrical Engeneering">Electrical Engeneering</option>
+                                <option value="Computer Sience & Neuroscience">Computer Sience & Neuroscience</option> -->
+
+                        </select>
+                        <div class="invalid-feedback">Pick faculty</div>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <label class="form-label" for="aboutsInput">About Me</label>
+                        <textarea class="form-control" id="aboutsInput"placeholder="write something about this student"></textarea>
+                    </div>
+                
+                    <div class="form-check mb-3 centeredText">
+                        <button class="btn btn-primary" type="submit" >Add Student</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script src="index.js"  type="text/javascript"></script>
+
+        <script>
+             initpage()
+            const createFacultiesOptions = async ()=>{
+                
+                let selectBox = document.getElementById("facultyInput")
+                let options = await getAllFaculties()
+                if(options){
+                    let optionsRecipe = []
+
+                    options.forEach(option => {
+                        optionsRecipe.push({tagName:"option", value:option.name, innerHTML:option.name})
+                    });
+                    let optionsEls =  createElementsByRecipe(optionsRecipe)
+                    appendChildren(selectBox,optionsEls)
+                    
+                }else{
+                    console.log("error fetching faculties");
+                }
+               
+
+            }
+          
+
+            const AddNewStudent = async() =>{
+                const student_name= document.getElementById("fullNameInput").value
+                const student_email = document.getElementById("emailInput").value
+                const student_faculty = document.getElementById("facultyInput").value
+                const student_birthday = document.getElementById("birthdayInput").value
+                const student_aboutme = document.getElementById("aboutsInput").value
+                if (student_name && student_email && student_faculty && student_birthday){
+                    const new_student = {
+                        fullName:student_name,
+                        email:student_email,
+                        faculty:student_faculty,
+                        birthday:student_birthday,
+                        aboutMe:student_aboutme
+                    }
+                    const answer = await postStudent(new_student)
+                    
+                    answer? redirectHome():console.log("error posting student")
+                }
+            }   
+        
+        
+        </script>
+    </body>
+</html>

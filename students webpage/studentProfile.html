@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css">
+        <title>Profile</title>
+    </head>
+    <body onload="loadStudent()">
+
+        <nav class="navbar navbar-expand-sm navbar-light sticky-top ">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="homepage.html">Academy Students</a>
+              
+              <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                  <li class="nav-item">
+                    <a class="nav-link" href="addStudent.html">ADD STUDENT</a>
+                  </li>
+                
+                  <li class="nav-item">
+                    <div class="input-group" style="margin-left: 10px; ">
+                        <div class="input-group-text inputTextNav" id="navUsername" ></div>
+                        <button class="btn btn-outline-primary"onclick="redirectLogin()">Logout</button>
+                    </div>
+                </li>
+                
+                </ul>
+              </div>
+              <form class="d-flex">
+                <input id="profileSearch" class="form-control me-2" type="text" placeholder="Search by ID..." id="searchBox">
+                <button class="btn btn-primary" type="button" onclick="goToStudentProfile()">Search</button>
+            </form>
+            </div>
+        </nav>
+        <div class="bodyDiv">
+            <div class="profileDIv">
+                <img alt="Student Picture" id="studentImg" class="profilePicture"><br>
+                <h2 id="studentName" class="heading"></h2>
+                <p id="studentInfo" class="lh-sm"></p>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary" onclick="redirectToGrades()">View Grades</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="redirectToUpdate()">Update Info</button>
+                </div>
+            </div>
+        </div>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <script src="index.js"  type="text/javascript"></script>
+        <script>
+            initpage()
+            const student_id = sessionStorage.getItem("student")
+            const loadStudent = async()=>{
+                let student  = await getStudentById(student_id)
+                
+                if (!student){
+                    console.log('no student found');
+                    document.getElementById("profileDIv").innerText ="no student found"
+                    return
+                }
+                document.getElementById("studentImg").src = student.img
+                document.getElementById("studentName").innerHTML = `${student.fullName}<br><h6>${student.honor? "&#x2B50 student earned academy honor! &#x2B50":""}</h6>`
+                document.getElementById("studentInfo").innerHTML =`<hr> Email: ${student.email}<br>
+                Faculty: ${student.faculty}<br>
+                Birthday: ${student.birthday.split('T')[0].replaceAll('-','/')}<hr>
+                About Me: ${student.aboutMe}<br>`
+
+            }
+            
+        </script>
+    </body>
+</html>
